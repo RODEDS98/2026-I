@@ -9,8 +9,8 @@ struct CNode
 	{
 		v = _v; left = right = 0;
 	}
-int v;
-CNode* left, * right;
+	int v;
+	CNode* left, * right;
 };
 
 class CBinTree
@@ -25,10 +25,10 @@ public:
 	void print();
 	void printRange(int min, int max);
 	void print_nivel();
-	void contarNodosPorNivel(CNode* n,int k);
+	void contarNodosPorNivel(CNode* n, int k);
 	void print_inv(CNode* p);
-	void vecinos_body( int k);
-	void vecinos(CNode* n, int k);
+	void vecinos_body(int x,int k);
+	void vecinos(CNode* n, queue<CNode*> &q, int val, int k);
 private:
 	CNode* root;
 	void deleteTree(CNode* n);
@@ -60,7 +60,7 @@ bool CBinTree::find(int x, CNode**& p)
 			p = &((*p)->right);
 		else
 			p = &((*p)->left);
-		return *p != 0;
+	return *p != 0;
 }
 
 bool CBinTree::ins(int x)
@@ -85,18 +85,49 @@ void CBinTree::inorder(CNode* n)
 	inorder(n->right);
 }
 
-void CBinTree::vecinos_body( int x,int k)
-{	
-	vecinos(n,x,k);
+void CBinTree::vecinos(CNode* n, queue<CNode*> &q, int x, int k)
+{
+	if (!n) return;
+
+	vecinos(n->left, q, x, k); 
+
+	if( q.size() < k ) {
+		q.push(n);
+	}
+	else if(   abs( (n->v) - x) < abs((q.front()->v) - x)){
+		q.push(n);
+		q.pop();
+	}
+	else {
+
+		return;
+	}
+
+	vecinos(n->right, q, x, k);
 }
 
-void CBinTree::vecinos(CNode* n,int x, int k)
-{	
-	if (!n) return;
-	inorder(n->left);
-	std::cout << n->v << " ";
-	inorder(n->right);
+void CBinTree::vecinos_body(int x, int k)
+{
+	std::queue<CNode*> q;
+	std::cout << "\n \n\n VECINOS: " << endl;
+	vecinos(root, q, x, k);
+	for (; !(q.empty()); q.pop()) {
+		cout << " " << (q.front())->v;
+	}
+	std::cout << endl;
+
+	vecinos(root, q, 88, 3);
+	for (; !(q.empty()); q.pop()) {
+		cout << " " << (q.front())->v;
+	}std::cout << endl;
+
+	vecinos(root, q, 76, 2);
+	for (; !(q.empty()); q.pop()) {
+		cout << " " << (q.front())->v;
+	}std::cout << endl;
 }
+
+
 
 
 
@@ -104,39 +135,39 @@ void CBinTree::vecinos(CNode* n,int x, int k)
 void CBinTree::inorder_mod(CNode* n, int min, int max)
 {
 	if (!n) return;
-	
-	if ( n->v >= min ) {
-		inorder_mod(n->left,  min,  max);  
+
+	if (n->v >= min) {
+		inorder_mod(n->left, min, max);
 	}
-	
+
 	if (n->v >= min && n->v <= max) {
 		std::cout << n->v << " ";
 	}
-	
-	
+
+
 	if (n->v <= max) {
 		inorder_mod(n->right, min, max);
 		//std::cout << n->v << " ";
 		//return;
 	}
-	
+
 	return;
 }
 
 void CBinTree::contarNodosPorNivel(CNode* n, int k) {
-	
+
 	if (!n) return;
 	queue<CNode*> q;
 	q.push(n);
 	int nivel = 0;
-	
-	while (  !q.empty()) {
+
+	while (!q.empty()) {
 		int cantidad = q.size(); // Aquí tienes el dato        
 		// Si es el nivel actual se imprime la cola   
 		if (nivel == k) {
 			for (int i = 0; i < cantidad; i++) {
 				CNode* actual = q.front();
-				cout <<actual->v <<" ";
+				cout << actual->v << " ";
 				q.push(actual);
 				q.pop();
 			}
@@ -150,8 +181,8 @@ void CBinTree::contarNodosPorNivel(CNode* n, int k) {
 			q.pop();
 		}
 		nivel++;
-		
-		
+
+
 	}
 }
 
@@ -161,29 +192,28 @@ void CBinTree::printRange(int min, int max)
 {
 	//cout << " imprimir rango" <<endl;
 	inorder_mod(root, min, max);
-	
-	
+
+
 }
 
 void CBinTree::print_nivel()
 {
 	cout << endl << " imprimir niveles" << endl;
 	contarNodosPorNivel(root, 2);
-	std::cout<< endl << " IMPRIMIR INV ";
+	std::cout << endl << " IMPRIMIR INV ";
 	print_inv(root);
-	std::cout<< endl << " IMPRIMIR  ";
+	std::cout << endl << " IMPRIMIR  ";
 	inorder(root);
-	vecinos_body(33,4);
-	
+	vecinos_body(33, 4);
+
 }
 
 void CBinTree::print_inv(CNode* p)
 {
-	if(!p) return;
-	print_inv( p -> right);
-	cout<< p ->v <<" ";
-	
-	print_inv( p -> left);
+	if (!p) return;
+	print_inv(p->right);
+	cout << p->v << " ";
+	print_inv(p->left);
 
 }
 // 55 51 47 (44) (41) (36) (33) 20
@@ -198,29 +228,29 @@ int main()
 	t.ins(88); t.ins(20); t.ins(36);
 	t.ins(44); t.ins(51); t.ins(57);
 	t.ins(65); t.ins(80); t.ins(99);
-	
- 	cout << "Arbol completo: ";
+
+	cout << "Arbol completo: ";
 	t.print();
-	
+
 	std::cout << "\nRango [35, 75]: ";
 	t.printRange(35, 75);
 	// Salida esperada: 35 40 45 60 62 65 68 70 75
-	
+
 	std::cout << "\nRango [40, 70]: ";
 	t.printRange(40, 70);
 	// Salida esperada: 40 45 60 62 65 68 70
-	
+
 	std::cout << "\nRango [10, 25]: ";
 	t.printRange(10, 25);
 	// Salida esperada: 15 20 25
-	
+
 	std::cout << "\nRango [65, 100]: ";
 	t.printRange(65, 100);
 	// Salida esperada: 65 68 70 75 80 85
 	t.print_nivel();
 	std::cout << "\n\n";
-	
 
-	
+
+
 	return 0;
 }
