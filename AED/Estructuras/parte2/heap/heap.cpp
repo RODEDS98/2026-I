@@ -44,9 +44,11 @@ public:
     void SiftDown(T* p,T* ptr1,T* ptr2);
     void SiftDown(int x);        // Se usa en el make_heap. El elemento está arriba y "baja" comparándose con sus hijos.
     void SiftUp(int x);            // Se usa en el push. El elemento nuevo entra al final y "sube" comparándose con su padre.
+    void sort_heap(T* A, T* B);
     void swap(T* A, T* B);
+    bool is_heap(T* A, T* B);
 
-    //sort_heap(); // orden ascendente
+
     //is_heap(T val);
     //is_heap_until();  //?
     vector<T> v1;
@@ -67,6 +69,24 @@ heap<T>::~heap() {
 
 }
 
+template <class T>
+bool heap<T>::is_heap(T* A, T* B) {
+    int rango = B - A;
+    for (T* p = A; p <= B; p++ ) {
+        int rango_actual = p - A;
+        if ( p + (rango_actual * 2 + 1) <= B ) {
+            if ( *(p + (rango_actual * 2 + 1)) > *p) {
+                return false;
+            }
+        }
+        if ( (rango_actual * 2 + 2 ) <= rango) {
+            if ( *(p + (rango_actual * 2 + 2)) > *p ) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 
 template <class T>
@@ -217,7 +237,21 @@ void heap<T>::SiftUp(int x) {            // Se usa en el push. El elemento nuevo
     }
 }
 
-
+template <class T>
+void  heap<T>::sort_heap(T* A, T* B) {
+    if (! is_heap(A,B) ) return;  // algoritmo de sort heap... 
+    int rango = B - A;
+    int rango_actual = B - A;
+    T* Head = A; 
+    T* Tail = B;
+    while (Head !=Tail) {  // p = A  void SiftDown(T* p,T* ptr1,T* ptr2);
+        int tmp = *Head;
+        *Head = *Tail;
+        *Tail = tmp;
+        Tail--;
+        SiftDown( Head, Head, Tail);
+    }
+}
 
 
 int main()
@@ -252,10 +286,10 @@ int main()
     // 2. Aplicar make_heap sobre el vector 'prueba'
     // Usamos punteros al inicio y al final como pide tu función
     miHeap.make_heap(&prueba2[0], &prueba2[0] + prueba2.size()-1);
-
+  
     cout << "\nArreglo despues de make_heap (Estructura de Max-Heap):" << endl;
     imprimirArreglo(prueba2);
-
+    cout<< "Es heap?: "<< miHeap.is_heap(&prueba2[0], &prueba2[0] + prueba2.size() - 1)<<endl;
     // 3. Verificación de la propiedad de Max-Heap
     cout << "\nVerificacion de niveles:" << endl;
     cout << "Raiz (Maximo): " << prueba2[0] << " (Debe ser50)" << endl;
@@ -278,5 +312,12 @@ int main()
     miHeap.push_heap(90);
     imprimirRango(&(miHeap.v[0]), &(miHeap.v[miHeap.v.size() - 1]));
 
+    cout << "\n Prueba de sort:" << endl;
+    imprimirArreglo(prueba2);
+    miHeap.sort_heap(&prueba2[0], &prueba2[0] + prueba2.size() - 1);
+    imprimirArreglo(prueba2);
     return 0;
+
+
+
 }
