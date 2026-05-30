@@ -1,19 +1,7 @@
 
 #include <iostream>
-#include <initializer_list>
-#include <queue>
-#include <stack>
-#include <string> 
-
 #include <thread> 
-
 using namespace std;
-
-void F1(int* M, int d) {
-    for (int* p = M; p < M + d ; p++) 
-        cout << *p<<" ";
-}
-
 
 void F2(int* M, int d, int* sum) {
     for (int* p = M; p < M + d ; p++) 
