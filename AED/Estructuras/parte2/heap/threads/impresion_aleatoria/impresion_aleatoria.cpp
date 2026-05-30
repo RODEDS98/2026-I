@@ -4,9 +4,8 @@
 using namespace std;
 
 void F1(int* M, int d) {
-    for (int* p = M; p < M + d ; p++) {
+    for (int* p = M; p < M + d ; p++) 
         cout << *p<<" ";
-    }
 }
 
 int main()
