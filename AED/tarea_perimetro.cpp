@@ -3,7 +3,7 @@
 #include <initializer_list>
 #include <queue>
 #include <stack>
-#include <string> // Necesario para to_string
+#include <string> 
 
 using namespace std;
 
@@ -157,32 +157,32 @@ void drawTreeEdges(sf::RenderWindow& window, Node* root) {
     }
 }
 
-// --- SE AÑADE EL PARÁMETRO DE LA FUENTE ---
+// Parametros de la fuente
 void drawTreeNodes(sf::RenderWindow& window, Node* root, sf::Font& font) {
     if (!root) return;
 
-    // Aumentamos ligeramente el radio para que entren bien los números de 2 dígitos
+    // Modificacion de radio
     float radius = 18.0f;
     sf::CircleShape circle(radius);
     circle.setOrigin(radius, radius);
     circle.setPosition(root->x, root->y);
 
     if (root->is_perimeter) {
-        circle.setFillColor(sf::Color::Green);
+        circle.setFillColor(sf::Color::Red);
     }
     else {
-        circle.setFillColor(sf::Color(70, 130, 180));
+        circle.setFillColor(sf::Color::Blue);
     }
     window.draw(circle);
 
-    // --- CONFIGURACIÓN DEL TEXTO ---
+    // Configuracion de texto
     sf::Text text;
     text.setFont(font);
     text.setString(to_string(root->value));
     text.setCharacterSize(14); // Tamaño de la letra
     text.setFillColor(sf::Color::Black);
 
-    // Centrar el texto perfectamente dentro del círculo
+    // Centrar el texto del círculo
     sf::FloatRect textRect = text.getLocalBounds();
     text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
     text.setPosition(root->x, root->y);
@@ -201,14 +201,14 @@ int main()
              30, 70,
              20, 40, 60, 80,
              15, 25, 35, 45, 55, 65, 75, 90,
-             12, 17, 22, 28, 32, 38, 42, 48, 52, 58, 62, 68, 72, 78, 85, 95 , 10 , 55 , 91 , 62 , 55 , 44 , 88, 1000 , 1001 , 105 , 109 , 50, 21, 22 , 45, 46 , 41});
+             12, 17, 22, 28, 32, 38, 42, 48, 52, 58, 62, 68, 72, 78, 85, 95 , 10 , 55 , 91 , 62 , 55 , 44 , 88, 1000 , 1001 , 105 , 109 , 50, 21, 22 , 45, 46 , 41 });
 
     t1.perimeter();
 
     sf::RenderWindow window(sf::VideoMode(1500, 800), "Visualizador SFML");
     window.setFramerateLimit(60);
 
-    
+
     sf::Font font;// CARGAR FUENTE
 
     if (!font.loadFromFile("C:\\Windows\\Fonts\\arial.ttf")) {
@@ -225,12 +225,12 @@ int main()
                 window.close();
         }
 
-        if (t1.get_root()) {            
+        if (t1.get_root()) {
             t1.calculatePositions(t1.get_root(), 750.0f, 60.0f, 360.0f);  // Ampliado el offset para balancear el nuevo tamaño de los nodos
         }
 
         window.clear(sf::Color(25, 25, 25));
-        drawTreeEdges(window, t1.get_root());        
+        drawTreeEdges(window, t1.get_root());
         drawTreeNodes(window, t1.get_root(), font); // fuente cargada para pintar los textos
 
         window.display();
