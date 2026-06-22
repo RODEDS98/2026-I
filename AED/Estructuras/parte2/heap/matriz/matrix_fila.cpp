@@ -1,84 +1,74 @@
 #include <iostream>
-#include <vector>
-using namespace std;
+
 struct CNode {
-    int v;
-    int y;
+    int value, i, j;
     CNode* next;
-    CNode(int y, int val) { 
-        this->y = y; v = val; next = nullptr; 
-    }
+    CNode(int i, int j, int val) { value = val; this->i = i; this->j = j; next = nullptr; }
 };
 
 class CSparseMatrix {
-    private:
-        std::vector<CNode*> fila_vector;
-        int fil, col;
-        public:
-
-        CSparseMatrix(int m, int n) {
-            fil = m, col = n;
-            fila_vector.resize(fil);
-            for (int i = 0; i < fila_vector.size(); i++) 
-                fila_vector[i] = nullptr;
+private:
+    CNode* head;
+    int M, N;
+public:
+    CSparseMatrix(int m, int n) { head = nullptr; M = m; N = n; }
+    ~CSparseMatrix()
+    {
+        CNode* next_node;
+        for (CNode* current = head; current; current = next_node) {
+            next_node = current->next;
+            delete current;
         }
-
-        ~CSparseMatrix() {
-            for (int i = 0; i < fila_vector.size(); i++) {
-                CNode* next = fila_vector[i];
-                for (CNode* current = next; current; current = next) {
-                    next = current->next;
-                    delete current;
-                }
+    }
+    bool find(int i, int j, CNode**& p) {
+        for (p = &head; *p && (*p)->i <= i; p = &((*p)->next)) {
+            if ( (*p)->i==i && (*p)->j==j ) {
+                return true;
             }
         }
-
-        bool find(int i, int j, CNode**& p) {
-            p = &fila_vector[i];
-            for (; *p && (*p)->y < j ; p = &((*p)->next));
-            return *p && (*p)->y == j ; 
-        }
-
-        void set(int i, int j, int val) {
-            CNode** p;
-            if (find(i, j, p)) {
-                if (val != 0) 
-                    (*p)->v = val ;        
-                else {
-                    CNode* tmp = *p;
-                    (*p) = (*p)->next;
-                    delete tmp;
-                }
-          
+        return false;
+    }
+    void set(int i, int j, int val) {
+        CNode** p;
+        if (find(i, j, p)) {
+            if (val != 0) {
+                (*p)->value = val;
+                return;
             }
-            else if (val != 0) {
+            else {
                 CNode* tmp = *p;
-                CNode* nuevo = new CNode(j, val);
-                *p = nuevo;
-                nuevo->next = tmp;
+                *p = (*p)->next;
+                delete tmp;
+                return;
             }
         }
-        int get(int i, int j) {
-            CNode** p = nullptr;     
-            if (find(i, j, p)) return (*p)->v;
-            return 0;
+        if (val != 0) {
+            *p = new CNode(i, j, val);
         }
 
-        void print() {
-            for (int i = 0; i < fil; i++) {
-                for (int j = 0; j < col; j++) {
-                    std::cout << get(i, j) << " ";
-                }
-                std::cout << '\n';
+    }
+    int get(int i, int j) {
+        CNode** p;
+        if (!find(i, j, p)) return 0;
+        return (*p)->value;
+    }
+
+    void print() {
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                std::cout << get(i, j) << " ";
             }
+            std::cout << '\n';
         }
-    };
+    }
+};
 
 int main() {
-    CSparseMatrix matrix(10, 9);
+    CSparseMatrix csm(10, 10);
 
-    matrix.set(1, 1, 5);
-    matrix.set(5, 3, 9);
-    matrix.print();
+
+    csm.set(9, 9, 5); csm.print();
+    csm.set(9, 9, 0); csm.print();
+
     return 0;
 }
